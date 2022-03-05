@@ -12,6 +12,7 @@ from rich.columns import Columns
 from rich.panel import Panel
 
 from cfg import PASSWORD
+import os
 
 from Services.FormatSql import UnfilledTable, UnsentTable, PendingTable, FilledTable, AllOrdersTable
 
@@ -114,7 +115,12 @@ custom_theme = Theme({
 console = Console(theme=custom_theme)
 
 if __name__ == '__main__':
-    # username = str(input("Please enter username."))
+    # --------------- For Docker (If we want to pass env vars) --------------------- #
+    # try:
+    #     _pw = os.environ['PASSWORD']
+    #     if _pw: PASSWORD = _pw
+    # except:
+    #     pass
 
     username = Prompt.ask("[b]Please enter username: ", default="zoakes")
     console.print(f"Username: [green]{username}")

@@ -6,6 +6,24 @@ import datetime
 
 from cfg import SQL_PASSWORD, SQL_USER, SQL_IP
 
+# ------------------- For Docker ! --------------------------- #
+import os
+
+try:
+    _ip = os.environ['SQL_IP']
+    if _ip: SQL_IP = _ip
+
+    _spw = os.environ['SQL_PASSWORD']
+    if _spw: SQL_PASSWORD = _spw
+
+    _sun = os.environ['SQL_USER']
+    if _sun: SQL_USER = _sun
+
+except:
+    pass
+
+# ------------------- End Docker ENV parse --------------------- #
+
 cnx = None
 cur = None
 
