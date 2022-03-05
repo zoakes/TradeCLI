@@ -128,8 +128,7 @@ if __name__ == '__main__':
             console.print("[failure]Incorrect password, Please try again.")
 
     # Threading Version (Start background task -- say checking PNL or updating table, whatever). https://www.programiz.com/python-programming/time/sleep
-    t1 = threading.Thread(target=test_non_blocking, daemon=True)
-    t1.start()
+
 
     log_out = False
     cmd = main_menu()  # Update to have prompt OUTSIDE main menu? (And remove from M cmd... pass there)
