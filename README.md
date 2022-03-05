@@ -13,6 +13,6 @@ To Run:
 >>> python cli_test.py
 ```
 
-![Usage](https://github.com/zoakes/TradeCLI/blob/master/imgs/usage.png)
+![Usage](https://github.com/zoakes/TradeCLI/blob/master/imgs/usage2.png)
 
-![Usage2]()
+
