@@ -8,4 +8,9 @@ Save password in config, update SQL.py to fit your respective sql connection. Fo
 
 Standard Usage (as is)
 
-![Usage](https://github.com/zoakes/TradeCLI/blob/master/imgs/usage.png)
+To Run: 
+```python
+>>> python cli_test.py
+```
+
+![Usage](https://github.com/zoakes/TradeCLI/blob/master/imgs/usage2.png)
