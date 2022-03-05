@@ -9,10 +9,11 @@ COPY . .
 
 ## Consider parsing env vars for the various IP, PW, USER of SQL ?
 
-#ENV PASSWORD = '<test_password>'
-#ENV SQL_IP = ''
-#ENV SQL_USER = ''
-#ENV SQL_PASSWORD = ''
+#ENV PASSWORD = '<test_password>' #DONT use, replace this check.
+#ENV SQL_IP = '' #DONT use... replace this check (hard to remember)
+
+#ENV SQL_USER = '' #Solely rely on this
+#ENV SQL_PASSWORD = '' #and THIS ?
 
 CMD ["python3","main.py"]
 
