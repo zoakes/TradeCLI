@@ -13,6 +13,8 @@ from rich.panel import Panel
 
 from cfg import PASSWORD
 
+from Services.FormatSql import UnfilledTable, UnsentTable, PendingTable, FilledTable, AllOrdersTable
+
 
 '''
 #Can replicate quickfix -- call a nonblocking coro / thread that will print things (all while reading in main thread / process)
@@ -30,7 +32,7 @@ def test_non_blocking():
     # https://www.programiz.com/python-programming/time/sleep
     while True:
         time.sleep(5)
-        print('running (threading)')
+        console.log('Live (thread 1)')
 
 
 async def test_non_block():
@@ -137,28 +139,41 @@ if __name__ == '__main__':
                          show_choices=False)
         CMD = cmd.upper()
 
+        # Main Menu
         if CMD == 'M':
             cmd = main_menu()  # Maybe pass on this instead?
 
+        # Balance
         elif CMD == 'B':
             # TODO: Lookup balance here (in SQL !)
             console.log('Balance: [success]$1,234,567.89')
 
+        # Positions (Filled Orders? Or Net Position?)
         elif CMD == 'P':
             # TODO: lookup positions
-            console.log('Positions (Table or Cards)')
+            # console.log('Positions (Table or Cards)')
+            FilledTable('Positions (Filled Orders) -- replace with Net Position later.')
 
+        # Profit / Loss
         elif CMD == 'PL':
             # TODO: lookup pnl
             console.log('PNL $(1,234.56)')
 
+        # Orders (Pending)
         elif CMD == 'O':
             console.log('Orders (Table)')
+            # AllOrdersTable()
+            UnsentTable()
+            PendingTable()
 
+        # Trades (Filled Orders)
         elif CMD == 'T':
             console.log('Trades (Table)')
+            FilledTable()
+
         elif CMD == 'L':
-            console.log('Log -- make live updating thread?')
+            console.log('Log -- make live updating thread eventually?')
+            AllOrdersTable()
 
         elif CMD == 'Q':
             confirm_log_out = Confirm.ask("Are you sure you want to log out?")
