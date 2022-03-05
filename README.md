@@ -10,7 +10,7 @@ Standard Usage (as is)
 
 To Run: 
 ```python
->>> python cli_test.py
+>>> python main.py
 ```
 
 ![Usage](https://github.com/zoakes/TradeCLI/blob/master/imgs/usage2.png)
