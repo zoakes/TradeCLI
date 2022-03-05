@@ -15,13 +15,11 @@ from cfg import PASSWORD
 
 from Services.FormatSql import UnfilledTable, UnsentTable, PendingTable, FilledTable, AllOrdersTable
 
-
 '''
 #Can replicate quickfix -- call a nonblocking coro / thread that will print things (all while reading in main thread / process)
 https://github.com/zoakes/FIX-OMS/blob/7e4d4eea1070e6e08bfd666cc9e6136e9c594316/initiator/application.py#L235
 
 '''
-
 
 import threading
 import time
@@ -67,6 +65,7 @@ def main_menu():
     # cmd = Prompt.ask("",choices=['b','m','p','pl','o','t','l', 'B','M','P','O','PL','T','L'], show_choices=False)
     # return cmd.upper()
 
+
 # Just keep it in main, no need.
 def parse_main_menu(cmd):
     CMD = cmd.upper()
@@ -99,6 +98,7 @@ def parse_main_menu(cmd):
             return False
     else:
         pass
+
 
 # --------------------------------- Rich Text Formatting --------------------------------- #
 
@@ -136,7 +136,8 @@ if __name__ == '__main__':
     cmd = main_menu()  # Update to have prompt OUTSIDE main menu? (And remove from M cmd... pass there)
     while True:
 
-        cmd = Prompt.ask(">>", choices=['b', 'm', 'p', 'pl', 'o', 't', 'l', 'B', 'M', 'P', 'O', 'PL', 'T', 'L', 'q','Q'],
+        cmd = Prompt.ask(">>",
+                         choices=['b', 'm', 'p', 'pl', 'o', 't', 'l', 'B', 'M', 'P', 'O', 'PL', 'T', 'L', 'q', 'Q'],
                          show_choices=False)
         CMD = cmd.upper()
 
@@ -146,34 +147,35 @@ if __name__ == '__main__':
 
         # Balance
         elif CMD == 'B':
-            # TODO: Lookup balance here (in SQL !)
+            # TODO: Lookup balance here (in SQL !) (Same SQL Table -- save BALANCE as well)
+            #  Table Structure -- IF NO SYMBOL, create TOTAL table (OR leave EMPTY line for TOTAL with others?)
             console.log('Balance: [success]$1,234,567.89')
 
         # Positions (Filled Orders? Or Net Position?)
         elif CMD == 'P':
-            # TODO: lookup positions
             # console.log('Positions (Table or Cards)')
             FilledTable('Positions (Filled Orders) -- replace with Net Position later.')
 
         # Profit / Loss
         elif CMD == 'PL':
-            # TODO: lookup pnl
+            # TODO: lookup pnl (Save another Sql Table with PNL status from rithmic?)
+            #  Table Structure: Symbol, Net Position, Basis?, Open PNL, Closed PNL, Balance)
             console.log('PNL $(1,234.56)')
 
         # Orders (Pending)
         elif CMD == 'O':
-            console.log('Orders (Table)')
+            # console.log('Orders (Table)')
             # AllOrdersTable()
             UnsentTable()
             PendingTable()
 
         # Trades (Filled Orders)
         elif CMD == 'T':
-            console.log('Trades (Table)')
+            # console.log('Trades (Table)')
             FilledTable()
 
         elif CMD == 'L':
-            console.log('Log -- make live updating thread eventually?')
+            # console.log('Log -- make live updating thread eventually?')
             AllOrdersTable()
 
         elif CMD == 'Q':
@@ -185,7 +187,6 @@ if __name__ == '__main__':
 
         if log_out:
             break
-
 
     console.print("[blue]Logging Out...")
     time.sleep(1)

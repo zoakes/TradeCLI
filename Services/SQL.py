@@ -4,7 +4,7 @@ import mysql.connector
 import asyncio
 import datetime
 
-from cfg import SQL_PASSWORD, SQL_USER
+from cfg import SQL_PASSWORD, SQL_USER, SQL_IP
 
 cnx = None
 cur = None
@@ -15,7 +15,7 @@ def sql_init():
     global cur
 
     cnx = mysql.connector.connect(user=SQL_USER, password=SQL_PASSWORD,
-                                  host = '192.168.1.178',
+                                  host = SQL_IP,
                                   database='test',
                                   auth_plugin='mysql_native_password',
                                   autocommit=True)
