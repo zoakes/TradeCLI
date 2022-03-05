@@ -14,3 +14,5 @@ To Run:
 ```
 
 ![Usage](https://github.com/zoakes/TradeCLI/blob/master/imgs/usage.png)
+
+![Usage2]()
