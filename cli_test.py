@@ -10,7 +10,7 @@ from rich import print as rprint
 
 from rich.columns import Columns
 from rich.panel import Panel
-
+Q
 from cfg import PASSWORD
 
 from Services.FormatSql import UnfilledTable, UnsentTable, PendingTable, FilledTable, AllOrdersTable

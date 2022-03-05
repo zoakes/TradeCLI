@@ -4,19 +4,17 @@ import mysql.connector
 import asyncio
 import datetime
 
-from cfg import SQL_PASSWORD
+from cfg import SQL_PASSWORD, SQL_USER
 
 cnx = None
 cur = None
 
 
-
-## TODO: Move password to cfg
 def sql_init():
     global cnx
     global cur
 
-    cnx = mysql.connector.connect(user='zach', password='zoakes1290',
+    cnx = mysql.connector.connect(user=SQL_USER, password=SQL_PASSWORD,
                                   host = '192.168.1.178',
                                   database='test',
                                   auth_plugin='mysql_native_password',
