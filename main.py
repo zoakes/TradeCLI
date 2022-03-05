@@ -125,6 +125,7 @@ if __name__ == '__main__':
     username = Prompt.ask("[b]Please enter username: ", default="zoakes")
     console.print(f"Username: [green]{username}")
 
+    # Maybe this is unneeded too ? Why login, if passing credentials for MSQL connection?
     password = None
     while password != PASSWORD:
         password = Prompt.ask("[b]Please enter password: ", password=True)
