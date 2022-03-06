@@ -124,7 +124,7 @@ console = Console(theme=custom_theme)
 
 if __name__ == '__main__':
 
-    print(sys.argv, len(sys.argv))
+
     # # To accept a CONFIG path for settings...
     path = None
     if len(sys.argv) > 1:
@@ -138,7 +138,7 @@ if __name__ == '__main__':
         PASSWORD = parse_config_file(value='PASSWORD')
 
 
-    print(CONFIG_PATH) #THIS is a cfgParse global variable!
+    # print(CONFIG_PATH) #THIS is a cfgParse global variable!
 
 
 
