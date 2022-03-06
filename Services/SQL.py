@@ -5,22 +5,62 @@ import asyncio
 import datetime
 
 from cfg import SQL_PASSWORD, SQL_USER, SQL_IP
+# from main import CONFIG_PATH -- THIS is a bad idea, breaks shit.
+
 
 # ------------------- For Docker ! --------------------------- #
-import os
+# import os
+#
+# try:
+#     _ip = os.environ['SQL_IP']
+#     if _ip: SQL_IP = _ip
+#
+#     _spw = os.environ['SQL_PASSWORD']
+#     if _spw: SQL_PASSWORD = _spw
+#
+#     _sun = os.environ['SQL_USER']
+#     if _sun: SQL_USER = _sun
+#
+# except:
+#     pass
 
-try:
-    _ip = os.environ['SQL_IP']
-    if _ip: SQL_IP = _ip
+## THIS allows us to PASS IN a config.txt file path (as an ARGUMENT!)
+def sql_envs(path='C:\\Users\\zach\\PycharmProjects\\CLI\\CLILibTests\\cfg.txt'):
+    import configparser
 
-    _spw = os.environ['SQL_PASSWORD']
-    if _spw: SQL_PASSWORD = _spw
+    if CONFIG_PATH:
+        path = CONFIG_PATH
 
-    _sun = os.environ['SQL_USER']
-    if _sun: SQL_USER = _sun
+    parser = configparser.ConfigParser()
+    parser.read(path)
 
-except:
-    pass
+    spw = parser.get('config', 'SQL_PASSWORD')
+    sun = parser.get('config', 'SQL_USER')
+    sip = parser.get('config', 'SQL_IP')
+    # print(sip, sun, spw)
+    #print(SQL_IP, type(SQL_IP), sip, type(sip))
+    set_sql_globals(sip,sun,spw) #Why is this causing an issue? (with IP?)
+    return sip, sun, spw
+
+
+def set_sql_globals(ip, username, password):
+    global SQL_IP
+    global SQL_PASSWORD
+    global SQL_USER
+
+    SQL_IP = str(ip)
+    SQL_USER = str(username)
+    SQL_PASSWORD = str(password)
+
+
+def test_parsed():
+    ip, un, pw = sql_envs()
+    assert ip == SQL_IP, f'Error  -- {ip} != {SQL_IP}'
+    assert un == SQL_USER, f'Error  -- {un} != {SQL_USER}'
+    assert pw == SQL_PASSWORD, f'Error  -- {pw} != {SQL_PASSWORD}'
+
+
+
 
 # ------------------- End Docker ENV parse --------------------- #
 
@@ -32,6 +72,7 @@ def sql_init():
     global cnx
     global cur
 
+    # ip,username,password = sql_envs() ## Do this instead?
     cnx = mysql.connector.connect(user=SQL_USER, password=SQL_PASSWORD,
                                   host = SQL_IP,
                                   database='test',
@@ -135,6 +176,7 @@ def sql_update_sent(uid):
     sql = f"UPDATE oms SET sent = 1 WHERE uid = {uid}"  # ?"  # (%s)"
     cur.execute(sql)
     cnx.commit()
+
 
 
 # ----------------------- OLD Async versions -------------------- ##

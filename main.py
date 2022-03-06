@@ -11,10 +11,18 @@ from rich import print as rprint
 from rich.columns import Columns
 from rich.panel import Panel
 
-from cfg import PASSWORD
-import os
+#OLD, DUMB way of doing password (REALLY, we dont need another fucking password!)
+# from cfg import PASSWORD
+
+# More current version of config (to pass a path in)
+from Services.cfgParse import parse_config_file, CONFIG_PATH
+# CONFIG_PATH = None
+
 
 from Services.FormatSql import UnfilledTable, UnsentTable, PendingTable, FilledTable, AllOrdersTable
+import os
+import sys
+
 
 '''
 #Can replicate quickfix -- call a nonblocking coro / thread that will print things (all while reading in main thread / process)
@@ -115,17 +123,26 @@ custom_theme = Theme({
 console = Console(theme=custom_theme)
 
 if __name__ == '__main__':
-    # --------------- For Docker (If we want to pass env vars) --------------------- #
-    # try:
-    #     _pw = os.environ['PASSWORD']
-    #     if _pw: PASSWORD = _pw
-    # except:
-    #     pass
 
-    username = Prompt.ask("[b]Please enter username: ", default="zoakes")
+
+    # # To accept a CONFIG path for settings...
+    if len(sys.argv) >= 1:
+        CONFIG_PATH = sys.argv[1]
+
+    #TODO: Unsure how best to handle this bullshit.  Need to save path at some point, and PASS DOWN!
+    if CONFIG_PATH:
+        PASSWORD = parse_config_file(CONFIG_PATH, 'PASSWORD')
+    else:
+        PASSWORD = parse_config_file(value='PASSWORD')
+
+    print(CONFIG_PATH) #THIS is a cfgParse global variable!
+
+
+
+    username = Prompt.ask("[b]Please enter username: ", default="zach")
     console.print(f"Username: [green]{username}")
 
-    # Maybe this is unneeded too ? Why login, if passing credentials for MSQL connection?
+    # Maybe this is unneeded too ? Why login, if passing credentials for MSQL connection? ------- MAKE this the SQL Password? (And pass to sql)
     password = None
     while password != PASSWORD:
         password = Prompt.ask("[b]Please enter password: ", password=True)
@@ -133,6 +150,8 @@ if __name__ == '__main__':
             console.print("[success]Successful Login.")
         else:
             console.print("[failure]Incorrect password, Please try again.")
+
+
 
     # Threading Version (Start background task -- say checking PNL or updating table, whatever). https://www.programiz.com/python-programming/time/sleep
 
