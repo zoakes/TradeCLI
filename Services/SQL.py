@@ -4,11 +4,10 @@ import mysql.connector
 import asyncio
 import datetime
 
-from cfg import SQL_PASSWORD, SQL_USER, SQL_IP
-# from main import CONFIG_PATH -- THIS is a bad idea, breaks shit.
+# from cfg import SQL_PASSWORD, SQL_USER, SQL_IP                                                                          #STILL reading these in... ? (REPLACED ************** This is easy fix if breaks)
 
+# ---------------------------------- For Docker / Config Bullshit -------------------------------------------------- #
 
-# ------------------- For Docker ! --------------------------- #
 # import os
 #
 # try:
@@ -23,6 +22,16 @@ from cfg import SQL_PASSWORD, SQL_USER, SQL_IP
 #
 # except:
 #     pass
+
+
+CONFIG_PATH = None
+from Services.cfgParse import CONFIG_PATH           #Import CONFIG_PATH from elsewhere instead? (This would read in the updates from main)
+
+from Services.globals import SQL_IP, SQL_USER, SQL_PASSWORD
+# ALSO calls sql_envs IF these are empty ------------------- YOU will need to decide to either SET in setup, or set in config to determine how to handle. TODO
+
+
+
 
 ## THIS allows us to PASS IN a config.txt file path (as an ARGUMENT!)
 def sql_envs(path='C:\\Users\\zach\\PycharmProjects\\CLI\\CLILibTests\\cfg.txt'):
@@ -43,6 +52,7 @@ def sql_envs(path='C:\\Users\\zach\\PycharmProjects\\CLI\\CLILibTests\\cfg.txt')
     return sip, sun, spw
 
 
+
 def set_sql_globals(ip, username, password):
     global SQL_IP
     global SQL_PASSWORD
@@ -53,6 +63,7 @@ def set_sql_globals(ip, username, password):
     SQL_PASSWORD = str(password)
 
 
+
 def test_parsed():
     ip, un, pw = sql_envs()
     assert ip == SQL_IP, f'Error  -- {ip} != {SQL_IP}'
@@ -60,9 +71,28 @@ def test_parsed():
     assert pw == SQL_PASSWORD, f'Error  -- {pw} != {SQL_PASSWORD}'
 
 
+def persist_globals(ip=None, un=None, pw=None):
+    global SQL_IP
+    global SQL_PASSWORD
+    global SQL_USER
 
+    # _i,_u,_p = False, False, False
 
-# ------------------- End Docker ENV parse --------------------- #
+    if ip:
+        SQL_IP = ip
+        print('Persisted IP: ', SQL_IP)
+
+    if un:
+        SQL_USER = un
+        print('Persisted UN:', SQL_USER)
+
+    if pw:
+        SQL_PASSWORD = pw
+        print('Persisted UN:', SQL_PASSWORD)
+
+    # print(f'Persisted: {SQL_IP if ip else None} -- {SQL_USER if un else None} -- {SQL_PASSWORD if pw else None}')
+
+# ----------------------------------------- End Docker ENV parse ---------------------------------------------------- #
 
 cnx = None
 cur = None
@@ -71,6 +101,7 @@ cur = None
 def sql_init():
     global cnx
     global cur
+
 
     # ip,username,password = sql_envs() ## Do this instead?
     cnx = mysql.connector.connect(user=SQL_USER, password=SQL_PASSWORD,
@@ -177,6 +208,10 @@ def sql_update_sent(uid):
     cur.execute(sql)
     cnx.commit()
 
+
+
+if SQL_IP is None or SQL_USER is None or SQL_PASSWORD is None:
+    sql_envs()
 
 
 # ----------------------- OLD Async versions -------------------- ##

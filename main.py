@@ -18,11 +18,17 @@ from rich.panel import Panel
 from Services.cfgParse import parse_config_file, CONFIG_PATH
 # CONFIG_PATH = None
 
-
+from Services.SQL import persist_globals
 from Services.FormatSql import UnfilledTable, UnsentTable, PendingTable, FilledTable, AllOrdersTable
+
+
 import os
 import sys
 
+
+
+#TODO: Replace all this passing around with globals.py module (HOLDS final globals for SQL)
+from Services.globals import set_sql_ip, set_sql_user, set_sql_password
 
 '''
 #Can replicate quickfix -- call a nonblocking coro / thread that will print things (all while reading in main thread / process)
@@ -124,13 +130,14 @@ console = Console(theme=custom_theme)
 
 if __name__ == '__main__':
 
+    # -------------------------- Accept a Config File Path (for sql login info) -------------------------------------- #
 
     # # To accept a CONFIG path for settings...
     path = None
     if len(sys.argv) > 1:
         path = sys.argv[1]
 
-    #TODO: Unsure how best to handle this bullshit.  Need to save path at some point, and PASS DOWN!
+    # IF received path argument, persist the path to GLOBAL (global of cfgParse)
     if path:
         PASSWORD = parse_config_file(path, 'PASSWORD')
         CONFIG_PATH = path #SAVES to cfgParse GLOBAL (for use later, in OTHER parse commands)
@@ -139,6 +146,8 @@ if __name__ == '__main__':
 
 
     # print(CONFIG_PATH) #THIS is a cfgParse global variable!
+
+    # ------------------------------ Accept a Config File Path (for sql login info) ---------------------------------------- #
 
 
 
@@ -154,6 +163,21 @@ if __name__ == '__main__':
         else:
             console.print("[failure]Incorrect password, Please try again.")
 
+
+    ## Optional -- Simply READ IN (Prompt) the password / username for SQL ?
+
+    sql_pass = Prompt.ask("[b]Please enter SQL Password (optional) >>")
+    if sql_pass != '':
+        persist_globals(pw=sql_pass)
+        set_sql_password(sql_pass)
+    # else:
+    #     # NEEd to set with config, now? (IF using globals...)
+
+
+    sql_un = Prompt.ask("[b]Please enter SQL Username (optional) >>")
+    if sql_un != '' and sql_un != None:
+        persist_globals(un = sql_un)
+        set_sql_user(sql_un)
 
 
     # Threading Version (Start background task -- say checking PNL or updating table, whatever). https://www.programiz.com/python-programming/time/sleep
