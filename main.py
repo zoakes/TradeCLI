@@ -18,17 +18,17 @@ from rich.panel import Panel
 from Services.cfgParse import parse_config_file, CONFIG_PATH
 # CONFIG_PATH = None
 
-from Services.SQL import persist_globals
+from Services.SQL import persist_globals, sql_envs, test_globals, sql_credential_test
 from Services.FormatSql import UnfilledTable, UnsentTable, PendingTable, FilledTable, AllOrdersTable
-
+from Services.globals import set_sql_ip, set_sql_user, set_sql_password, check_globals
 
 import os
 import sys
 
 
 
-#TODO: Replace all this passing around with globals.py module (HOLDS final globals for SQL)
-from Services.globals import set_sql_ip, set_sql_user, set_sql_password
+
+
 
 '''
 #Can replicate quickfix -- call a nonblocking coro / thread that will print things (all while reading in main thread / process)
@@ -88,15 +88,12 @@ def parse_main_menu(cmd):
         cmd = main_menu()  # Maybe pass on this instead?
 
     elif CMD == 'B':
-        # TODO: Lookup balance here (in SQL !)
         console.log('Balance: [success]$1,234,567.89')
 
     elif CMD == 'P':
-        # TODO: lookup positions
         console.log('Positions (Table or Cards)')
 
     elif CMD == 'PL':
-        # TODO: lookup pnl
         console.log('PNL $(1,234.56)')
 
     elif CMD == 'O':
@@ -145,38 +142,56 @@ if __name__ == '__main__':
         PASSWORD = parse_config_file(value='PASSWORD')
 
 
-    # print(CONFIG_PATH) #THIS is a cfgParse global variable!
+    # Parse SQL Envs
+    a,b,c = sql_envs()
+
+    # Unsure why these globals.globals arent working? That def cleans up the program... (IF it works)
+    # prompt_for_login = check_globals() #This isn't saving to globals for some reason? (Meaning sql_envs isnt saving to globals.global variables.
+    # print(prompt_for_login, a, b, c)
+
+    prompt_for_login = test_globals()
+    print(prompt_for_login, a,b,c)
 
     # ------------------------------ Accept user input for credentials  ---------------------------------------- #
 
 
-    username = Prompt.ask("[b]Please enter username: ", default="zach")
-    console.print(f"Username: [green]{username}")
-
-    # Maybe this is unneeded too ? Why login, if passing credentials for MSQL connection? ------- MAKE this the SQL Password? (And pass to sql)
-    password = None
-    while password != PASSWORD:
-        password = Prompt.ask("[b]Please enter password: ", password=True)
-        if password == PASSWORD:
-            console.print("[success]Successful Login.")
-        else:
-            console.print("[failure]Incorrect password, Please try again.")
-
-
-    ## TODO -- Simply READ IN (Prompt) the password / username for SQL ? -- think this is cleaner logic than passing paths to configs.   TRY both in BRANCHES, merge better option to origin?
+    # username = Prompt.ask("[b]Please enter username: ", default="zach")
+    # console.print(f"Username: [green]{username}")
+    #
+    # # Maybe this is unneeded too ? Why login, if passing credentials for MSQL connection? ------- MAKE this the SQL Password? (And pass to sql)
+    # password = None
+    # while password != PASSWORD:
+    #     password = Prompt.ask("[b]Please enter password: ", password=True)
+    #     if password == PASSWORD:
+    #         console.print("[success]Successful Login.")
+    #     else:
+    #         console.print("[failure]Incorrect password, Please try again.")
 
 
-    sql_un = Prompt.ask("[b]Please enter SQL Username (optional if config used) >>")
-    if sql_un != '' and sql_un != None:
-        persist_globals(un = sql_un)
-        set_sql_user(sql_un)
+    #TODO -- Simply READ IN (Prompt) the password / username for SQL ? -- think this is cleaner logic than passing paths to configs.   TRY both in BRANCHES, merge better option to origin?
+    # MAKE this the only login,
+    # TRY config (if successfully parses config, and HAS globals set, NO prompts)
+    # IF still not set, prompt below for password (and do a try / except in a while loop to test the credentials)
 
-    sql_pass = Prompt.ask("[b]Please enter SQL Password (optional if config used) >>")
-    if sql_pass != '':
-        persist_globals(pw=sql_pass)
-        set_sql_password(sql_pass)
+    if not (a and b and c):
+        while True:
+            sql_un = Prompt.ask("[b]Please enter SQL Username (optional if config used) >>")
+            if sql_un != '' and sql_un != None:
+                persist_globals(un = sql_un)
+                set_sql_user(sql_un)
 
-    #TODO Make this the only login ?
+            sql_pass = Prompt.ask("[b]Please enter SQL Password (optional if config used) >>")
+            if sql_pass != '':
+                persist_globals(pw=sql_pass)
+                set_sql_password(sql_pass)
+
+
+            if sql_credential_test():
+                break
+            else:
+                console.print('[failure] Please Retry Entering SQL Credentials.')
+
+
 
     # Threading Version (Start background task -- say checking PNL or updating table, whatever). https://www.programiz.com/python-programming/time/sleep
 

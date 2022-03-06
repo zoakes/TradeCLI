@@ -25,3 +25,6 @@ def parse_config_file(path='C:\\Users\\zach\\PycharmProjects\\CLI\\CLILibTests\\
 # val = parse_config_file(value='PASSWORD')
 # print(val)
 
+
+
+# TRY adding logic here that parses OTHER vars, and SETS globals.globals ? #TODO

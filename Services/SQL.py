@@ -62,6 +62,12 @@ def set_sql_globals(ip, username, password):
     SQL_USER = str(username)
     SQL_PASSWORD = str(password)
 
+def test_globals():
+    global SQL_IP
+    global SQL_PASSWORD
+    global SQL_USER
+
+    return SQL_IP, SQL_USER, SQL_PASSWORD
 
 
 def test_parsed():
@@ -96,6 +102,20 @@ def persist_globals(ip=None, un=None, pw=None):
 
 cnx = None
 cur = None
+
+def sql_credential_test():
+    global cnx
+    global cur
+
+    try:
+        if cnx is None or cur is None:
+            sql_init()
+
+        cur.execute("SELECT * FROM oms")
+        results = cur.fetchall()
+        return True
+    except:
+        return False
 
 
 def sql_init():

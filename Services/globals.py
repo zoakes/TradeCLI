@@ -14,3 +14,11 @@ def set_sql_password(password):
 def set_sql_ip(ip):
     global SQL_IP
     SQL_IP = ip
+
+
+def check_globals():
+    global SQL_IP
+    global SQL_PASSWORD
+    global SQL_USER
+
+    return SQL_IP, SQL_PASSWORD, SQL_USER
