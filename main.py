@@ -147,8 +147,7 @@ if __name__ == '__main__':
 
     # print(CONFIG_PATH) #THIS is a cfgParse global variable!
 
-    # ------------------------------ Accept a Config File Path (for sql login info) ---------------------------------------- #
-
+    # ------------------------------ Accept user input for credentials  ---------------------------------------- #
 
 
     username = Prompt.ask("[b]Please enter username: ", default="zach")
@@ -164,21 +163,20 @@ if __name__ == '__main__':
             console.print("[failure]Incorrect password, Please try again.")
 
 
-    ## Optional -- Simply READ IN (Prompt) the password / username for SQL ?
-
-    sql_pass = Prompt.ask("[b]Please enter SQL Password (optional) >>")
-    if sql_pass != '':
-        persist_globals(pw=sql_pass)
-        set_sql_password(sql_pass)
-    # else:
-    #     # NEEd to set with config, now? (IF using globals...)
+    ## TODO -- Simply READ IN (Prompt) the password / username for SQL ? -- think this is cleaner logic than passing paths to configs.   TRY both in BRANCHES, merge better option to origin?
 
 
-    sql_un = Prompt.ask("[b]Please enter SQL Username (optional) >>")
+    sql_un = Prompt.ask("[b]Please enter SQL Username (optional if config used) >>")
     if sql_un != '' and sql_un != None:
         persist_globals(un = sql_un)
         set_sql_user(sql_un)
 
+    sql_pass = Prompt.ask("[b]Please enter SQL Password (optional if config used) >>")
+    if sql_pass != '':
+        persist_globals(pw=sql_pass)
+        set_sql_password(sql_pass)
+
+    #TODO Make this the only login ?
 
     # Threading Version (Start background task -- say checking PNL or updating table, whatever). https://www.programiz.com/python-programming/time/sleep
 
