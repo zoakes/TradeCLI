@@ -7,7 +7,11 @@ def parse_config_file(path='C:\\Users\\zach\\PycharmProjects\\CLI\\CLILibTests\\
 
     if CONFIG_PATH:
         path = CONFIG_PATH
+        print('Using global CONFIG_PATH: ', CONFIG_PATH)
+    else:
+        CONFIG_PATH = path
 
+    # print('CONFIG PATH: ', CONFIG_PATH) #Bingo !
     parser = configparser.ConfigParser()
     parser.read(path)
 

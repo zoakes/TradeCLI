@@ -124,16 +124,19 @@ console = Console(theme=custom_theme)
 
 if __name__ == '__main__':
 
-
+    print(sys.argv, len(sys.argv))
     # # To accept a CONFIG path for settings...
-    if len(sys.argv) >= 1:
-        CONFIG_PATH = sys.argv[1]
+    path = None
+    if len(sys.argv) > 1:
+        path = sys.argv[1]
 
     #TODO: Unsure how best to handle this bullshit.  Need to save path at some point, and PASS DOWN!
-    if CONFIG_PATH:
-        PASSWORD = parse_config_file(CONFIG_PATH, 'PASSWORD')
+    if path:
+        PASSWORD = parse_config_file(path, 'PASSWORD')
+        CONFIG_PATH = path #SAVES to cfgParse GLOBAL (for use later, in OTHER parse commands)
     else:
         PASSWORD = parse_config_file(value='PASSWORD')
+
 
     print(CONFIG_PATH) #THIS is a cfgParse global variable!
 
