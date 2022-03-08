@@ -1,6 +1,6 @@
 import configparser
 
-CONFIG_PATH = None
+CONFIG_PATH = None #SAVE as a Global too !! TODO
 
 def parse_config_file(path='C:\\Users\\zach\\PycharmProjects\\CLI\\CLILibTests\\cfg.txt', value='PASSWORD'):
     global CONFIG_PATH

@@ -27,7 +27,7 @@ import datetime
 CONFIG_PATH = None
 from Services.cfgParse import CONFIG_PATH           #Import CONFIG_PATH from elsewhere instead? (This would read in the updates from main)
 
-from Services.globals import SQL_IP, SQL_USER, SQL_PASSWORD
+from Services.globals import SQL_IP, SQL_USER, SQL_PASSWORD, get_sql_user, get_sql_password, get_sql_ip, set_sql_user, set_sql_ip, set_sql_password
 # ALSO calls sql_envs IF these are empty ------------------- YOU will need to decide to either SET in setup, or set in config to determine how to handle. TODO
 
 
@@ -117,6 +117,22 @@ def sql_credential_test():
     except:
         return False
 
+def sql_conn_test(recon = True):
+    global cnx
+    global cur
+
+    try:
+        assert cnx.is_connected(), 'not connected --- Handling.'
+        cur.execute("SELECT * FROM oms")
+        results = cur.fetchall()
+    except:
+        if recon:
+            sql_init()
+            print('Reconnected.')
+        return False
+    return True
+
+
 
 def sql_init():
     global cnx
@@ -130,6 +146,8 @@ def sql_init():
                                   auth_plugin='mysql_native_password',
                                   autocommit=True)
     cur = cnx.cursor(buffered=True)
+
+
 
 
 def get_orders(sent=None, filled=None):
@@ -230,8 +248,22 @@ def sql_update_sent(uid):
 
 
 
+# -------------------------- Testing Global Behavior -------------------------- #
+
+print(SQL_IP, SQL_USER, SQL_PASSWORD)
+
+set_sql_password('zoakes1290')
+SQL_IP = get_sql_password() #MUST be assigned locally? weird... but okay.
+print(SQL_IP, SQL_USER, SQL_PASSWORD)
+
+
+## TODO: make this BETTER (this is messy, confusing -- use globals in one place, with setters + import them as needed)
 if SQL_IP is None or SQL_USER is None or SQL_PASSWORD is None:
     sql_envs()
+
+print(SQL_IP, SQL_USER, SQL_PASSWORD)
+
+
 
 
 # ----------------------- OLD Async versions -------------------- ##

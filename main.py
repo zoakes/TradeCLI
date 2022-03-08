@@ -18,7 +18,7 @@ from rich.panel import Panel
 from Services.cfgParse import parse_config_file, CONFIG_PATH
 # CONFIG_PATH = None
 
-from Services.SQL import persist_globals, sql_envs, test_globals, sql_credential_test
+from Services.SQL import persist_globals, sql_envs, test_globals, sql_credential_test, sql_conn_test
 from Services.FormatSql import UnfilledTable, UnsentTable, PendingTable, FilledTable, AllOrdersTable
 from Services.globals import set_sql_ip, set_sql_user, set_sql_password, check_globals
 
@@ -142,6 +142,7 @@ if __name__ == '__main__':
         PASSWORD = parse_config_file(value='PASSWORD')
 
 
+
     # Parse SQL Envs
     a,b,c = sql_envs()
 
@@ -194,13 +195,13 @@ if __name__ == '__main__':
 
 
     # Threading Version (Start background task -- say checking PNL or updating table, whatever). https://www.programiz.com/python-programming/time/sleep
-
     # t1 = threading.Thread(target=test_non_blocking, daemon=True)
     # t1.start()
 
     log_out = False
     cmd = main_menu()  # Update to have prompt OUTSIDE main menu? (And remove from M cmd... pass there)
     while True:
+        sql_conn_test(True)
 
         cmd = Prompt.ask(">>",
                          choices=['b', 'm', 'p', 'pl', 'o', 't', 'l', 'B', 'M', 'P', 'O', 'PL', 'T', 'L', 'q', 'Q'],
