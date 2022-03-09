@@ -128,7 +128,7 @@ def sql_conn_test(recon = True):
     except:
         if recon:
             sql_init()
-            print('Reconnected.')
+            print('(re)Connected.')
         return False
     return True
 
@@ -250,11 +250,11 @@ def sql_update_sent(uid):
 
 # -------------------------- Testing Global Behavior -------------------------- #
 
-print(SQL_IP, SQL_USER, SQL_PASSWORD)
-
-set_sql_password('zoakes1290')
-SQL_IP = get_sql_password() #MUST be assigned locally? weird... but okay.
-print(SQL_IP, SQL_USER, SQL_PASSWORD)
+# print(SQL_IP, SQL_USER, SQL_PASSWORD)
+#
+# set_sql_password('zoakes1290')
+# SQL_IP = get_sql_password() #MUST be assigned locally? weird... but okay.
+# print(SQL_IP, SQL_USER, SQL_PASSWORD)
 
 
 ## TODO: make this BETTER (this is messy, confusing -- use globals in one place, with setters + import them as needed)

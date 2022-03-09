@@ -2,6 +2,9 @@ import click
 import fire  # Undecided on which lib to use yet...
 
 import datetime
+import locale
+locale.setlocale(locale.LC_ALL, 'en_US')
+
 import rich
 from rich.console import Console
 from rich.prompt import Prompt
@@ -161,7 +164,7 @@ if __name__ == '__main__':
     # print(prompt_for_login, a, b, c)
 
     prompt_for_login = test_globals()
-    print(prompt_for_login, a,b,c)
+    # print(prompt_for_login, a,b,c)
 
     # ------------------------------ Accept user input for credentials  ---------------------------------------- #
 
@@ -190,11 +193,13 @@ if __name__ == '__main__':
             if sql_un != '' and sql_un != None:
                 persist_globals(un = sql_un)
                 set_sql_user(sql_un)
+                Global.SQL_USER = sql_un # BEST method here ..
 
             sql_pass = Prompt.ask("[b]Please enter SQL Password (optional if config used) >>")
             if sql_pass != '':
                 persist_globals(pw=sql_pass)
                 set_sql_password(sql_pass)
+                Global.SQL_PASSWORD = sql_pass
 
 
             if sql_credential_test():
@@ -209,9 +214,9 @@ if __name__ == '__main__':
     # t1.start()
 
     log_out = False
-    cmd = main_menu()  # Update to have prompt OUTSIDE main menu? (And remove from M cmd... pass there)
+    cmd = main_menu()
     while True:
-        # Check connection (Reconnect if not connected)
+        # Check connection (Reconnect if not connected) (Move to bottom of while loop?)
         sql_conn_test(True)
 
         cmd = Prompt.ask(">>",
@@ -227,7 +232,9 @@ if __name__ == '__main__':
         elif CMD == 'B':
             # TODO: Lookup balance here (in SQL !) (Same SQL Table -- save BALANCE as well)
             #  Table Structure -- IF NO SYMBOL, create TOTAL table (OR leave EMPTY line for TOTAL with others?)
-            console.log('Balance: [success]$1,234,567.89')
+            bal = locale.format_string("%d", 1234567.89, grouping=True)
+            s = f'Balance: [success] ${bal}'
+            console.print(Panel(s, expand=False))
 
         # Positions (Filled Orders? Or Net Position?)
         elif CMD == 'P':
@@ -237,8 +244,16 @@ if __name__ == '__main__':
         # Profit / Loss
         elif CMD == 'PL':
             # TODO: lookup pnl (Save another Sql Table with PNL status from rithmic?)
-            #  Table Structure: Symbol, Net Position, Basis?, Open PNL, Closed PNL, Balance)
-            console.log('PNL $(1,234.56)')
+            #  Table Structure: Symbol, Net Position, Basis?, Open PNL, Closed PNL, Balance) (** Maybe include in SAME panel as Balance?)
+            # console.log('PNL $(1,234.56)')
+            demo_opl = 1234.56
+            demo_cpl = 4567.89
+
+            opl = locale.format_string("%d", demo_opl, grouping=True)
+            cpl = locale.format_string('%d', demo_cpl, grouping=True)
+            s = f"Open PNL   : [green]${opl}[/green]\n" \
+                f"Closed PNL : [green]${cpl}"
+            console.print(Panel(s,expand=False))
 
         # Orders (Pending)
         elif CMD == 'O':
