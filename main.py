@@ -272,7 +272,7 @@ if __name__ == '__main__':
             # minutes, seconds = divmod(remainder, 60)
 
             s = f"Live since {Global.StartTime.strftime('%x')} {Global.StartTime.strftime('%X')}\nUptime: [blue]   {uptime}" ##{days}d {hours}:{minutes}:{seconds}"
-            console.print(Panel(s, expand=True))
+            console.print(Panel(s,expand=False))
 
         else:
             pass
