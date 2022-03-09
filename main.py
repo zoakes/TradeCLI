@@ -3,6 +3,7 @@ import fire  # Undecided on which lib to use yet...
 
 import datetime
 import locale
+
 locale.setlocale(locale.LC_ALL, 'en_US')
 
 import rich
@@ -15,7 +16,7 @@ from rich import print as rprint
 from rich.columns import Columns
 from rich.panel import Panel
 
-#OLD, DUMB way of doing password (REALLY, we dont need another fucking password!)
+# OLD, DUMB way of doing password (REALLY, we dont need another fucking password!)
 # from cfg import PASSWORD
 
 # More current version of config (to pass a path in)
@@ -28,11 +29,6 @@ from Services.globals import set_sql_ip, set_sql_user, set_sql_password, check_g
 
 import os
 import sys
-
-
-
-
-
 
 '''
 #Can replicate quickfix -- call a nonblocking coro / thread that will print things (all while reading in main thread / process)
@@ -67,7 +63,7 @@ menu = {"Main": "M",
         "Trades": "T",
         "Log": 'L',
         'Uptime': 'U',
-    }
+        }
 
 
 def main_menu():
@@ -84,8 +80,9 @@ def main_menu():
         p = Panel(s, expand=True)
         lst_of_panels.append(p)
 
-    console.print(" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Main Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n", justify='left')
-    #console.print(Panel("Main Menu"))
+    console.print(" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Main Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n",
+                  justify='left')
+    # console.print(Panel("Main Menu"))
     console.print(Columns(lst_of_panels), justify='left')
 
     # Unsure if I want this here, or AFTER main_menu called...
@@ -95,34 +92,75 @@ def main_menu():
 
 
 # Just keep it in main, no need.
-def parse_main_menu(cmd):
-    CMD = cmd.upper()
+def parse_main_menu(CMD):
+    # Main Menu
     if CMD == 'M':
         cmd = main_menu()  # Maybe pass on this instead?
 
+    # Balance
     elif CMD == 'B':
-        console.log('Balance: [success]$1,234,567.89')
+        # TODO: Lookup balance here (in SQL !) (Same SQL Table -- save BALANCE as well)
+        #  Table Structure -- IF NO SYMBOL, create TOTAL table (OR leave EMPTY line for TOTAL with others?)
+        bal = locale.format_string("%d", 1234567.89, grouping=True)
+        s = f'Balance: [success] ${bal}'
+        console.print(Panel(s, expand=False))
 
+    # Positions (Filled Orders? Or Net Position?)
     elif CMD == 'P':
-        console.log('Positions (Table or Cards)')
+        # console.log('Positions (Table or Cards)')
+        FilledTable('Positions (Filled Orders) -- replace with Net Position later.')
 
+    # Profit / Loss
     elif CMD == 'PL':
-        console.log('PNL $(1,234.56)')
+        # TODO: lookup pnl (Save another Sql Table with PNL status from rithmic?)
+        #  Table Structure: Symbol, Net Position, Basis?, Open PNL, Closed PNL, Balance) (** Maybe include in SAME panel as Balance?)
+        # console.log('PNL $(1,234.56)')
+        demo_opl = 1234.56
+        demo_cpl = 4567.89
 
+        opl = locale.format_string("%d", demo_opl, grouping=True)
+        cpl = locale.format_string('%d', demo_cpl, grouping=True)
+        s = f"Open PNL   : [green]${opl}[/green]\n" \
+            f"Closed PNL : [green]${cpl}"
+        console.print(Panel(s, expand=False))
+
+    # Orders (Pending)
     elif CMD == 'O':
-        console.log('Orders (Table)')
+        # console.log('Orders (Table)')
+        # AllOrdersTable()
+        UnsentTable()
+        PendingTable()
 
+    # Trades (Filled Orders)
     elif CMD == 'T':
-        console.log('Trades (Table)')
+        # console.log('Trades (Table)')
+        FilledTable()
+
     elif CMD == 'L':
-        console.log('Log -- make live updating thread?')
+        # console.log('Log -- make live updating thread eventually?')
+        AllOrdersTable()
 
     elif CMD == 'Q':
-        confirm_log_out = Confirm.ask("Do you like rich?")
+        confirm_log_out = Confirm.ask("Are you sure you want to log out?")
         if confirm_log_out:
-            return False
+            log_out = True
+
+    elif CMD == 'U':
+        curr = datetime.datetime.now()
+        uptime = curr - Global.StartTime
+        # days = uptime.days
+        # hours, remainder = divmod(uptime.seconds, 3600)
+        # hours = hours - (days // 1)
+        # minutes, seconds = divmod(remainder, 60)
+
+        s = f"Live since {Global.StartTime.strftime('%x')} {Global.StartTime.strftime('%X')}\nUptime: [blue]   {uptime}"  ##{days}d {hours}:{minutes}:{seconds}"
+        console.print(Panel(s, expand=False))
+
     else:
         pass
+
+    if confirm_log_out:
+        return True
 
 
 # --------------------------------- Rich Text Formatting --------------------------------- #
@@ -150,16 +188,15 @@ if __name__ == '__main__':
     # IF received path argument, persist the path to GLOBAL (global of cfgParse)
     if path:
         PASSWORD = parse_config_file(path, 'PASSWORD')
-        CONFIG_PATH = path #SAVES to cfgParse GLOBAL (for use later, in OTHER parse commands) #REPLACE with BELOW
+        CONFIG_PATH = path  # SAVES to cfgParse GLOBAL (for use later, in OTHER parse commands) #REPLACE with BELOW
         Global.CONFIG_PATH = path
     else:
         PASSWORD = parse_config_file(value='PASSWORD')
 
-
-
     # Parse SQL Env vars
-    a,b,c = sql_envs()
+    a, b, c = sql_envs()
 
+    # SAVE for testing with Global later !
     # Unsure why these globals.globals arent working? That def cleans up the program... (IF it works)
     # prompt_for_login = check_globals() #This isn't saving to globals for some reason? (Meaning sql_envs isnt saving to globals.global variables.
     # print(prompt_for_login, a, b, c)
@@ -184,7 +221,7 @@ if __name__ == '__main__':
     #         console.print("[failure]Incorrect password, Please try again.")
     '''
 
-    #TODO -- Try CONFIG (with .env -- dotenv), or ENV default vars in docker?
+    # TODO -- Try CONFIG (with .env -- dotenv), or ENV default vars in docker?
     # TRY config (if successfully parses config, and HAS globals set, NO prompts)
     # IF still not set, prompt below for password (and do a try / except in a while loop to test the credentials)
 
@@ -192,16 +229,15 @@ if __name__ == '__main__':
         while True:
             sql_un = Prompt.ask("[b]Please enter SQL Username (optional if config used) >>")
             if sql_un != '' and sql_un != None:
-                persist_globals(un = sql_un)
+                persist_globals(un=sql_un)
                 set_sql_user(sql_un)
-                Global.SQL_USER = sql_un # BEST method here ..
+                Global.SQL_USER = sql_un  # BEST method here ..
 
             sql_pass = Prompt.ask("[b]Please enter SQL Password (optional if config used) >>")
             if sql_pass != '':
                 persist_globals(pw=sql_pass)
                 set_sql_password(sql_pass)
                 Global.SQL_PASSWORD = sql_pass
-
 
             if sql_credential_test():
                 break
@@ -221,7 +257,8 @@ if __name__ == '__main__':
         sql_conn_test(True)
 
         cmd = Prompt.ask(">>",
-                         choices=['b', 'm', 'p', 'pl', 'o', 't', 'l', 'B', 'M', 'P', 'O', 'PL', 'T', 'L', 'q', 'Q', 'U','u'],
+                         choices=['b', 'm', 'p', 'pl', 'o', 't', 'l', 'B', 'M', 'P', 'O', 'PL', 'T', 'L', 'q', 'Q', 'U',
+                                  'u'],
                          show_choices=False)
         CMD = cmd.upper()
 
@@ -254,7 +291,7 @@ if __name__ == '__main__':
             cpl = locale.format_string('%d', demo_cpl, grouping=True)
             s = f"Open PNL   : [green]${opl}[/green]\n" \
                 f"Closed PNL : [green]${cpl}"
-            console.print(Panel(s,expand=False))
+            console.print(Panel(s, expand=False))
 
         # Orders (Pending)
         elif CMD == 'O':
@@ -285,11 +322,13 @@ if __name__ == '__main__':
             # hours = hours - (days // 1)
             # minutes, seconds = divmod(remainder, 60)
 
-            s = f"Live since {Global.StartTime.strftime('%x')} {Global.StartTime.strftime('%X')}\nUptime: [blue]   {uptime}" ##{days}d {hours}:{minutes}:{seconds}"
-            console.print(Panel(s,expand=False))
+            s = f"Live since {Global.StartTime.strftime('%x')} {Global.StartTime.strftime('%X')}\nUptime: [blue]   {uptime}"  ##{days}d {hours}:{minutes}:{seconds}"
+            console.print(Panel(s, expand=False))
 
         else:
             pass
+
+        # log_out = parse_main_menu(CMD) # To make this more segmented.
 
         if log_out:
             break
@@ -299,13 +338,3 @@ if __name__ == '__main__':
     console.print("[blue]Logging Out...")
     time.sleep(1)
     console.print("Goodbye.")
-
-    # FOR prompts... will need to have a MAIN menu, and BACK as an option.
-    # Would go to main menu, select whatever, then go back, etc.
-
-    # DONT think I want this, because I dont want to print endlessly, likely want a true command line after this?
-    # Otherwise, will be adding threads, etc.
-
-    # FOR Yes / No stuff... https://rich.readthedocs.io/en/stable/prompt.html
-    # is_rich_great = Confirm.ask("Do you like rich?")
-    # console.print(f"Is Great? {is_rich_great}", style='green on white')
