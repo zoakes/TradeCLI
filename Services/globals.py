@@ -46,6 +46,8 @@ from dataclasses import dataclass
 
 @dataclass
 class Global:
+    CONFIG_PATH = None
+
     SQL_IP = None
     SQL_PASSWORD = None
     SQL_USER = None

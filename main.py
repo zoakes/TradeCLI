@@ -150,13 +150,14 @@ if __name__ == '__main__':
     # IF received path argument, persist the path to GLOBAL (global of cfgParse)
     if path:
         PASSWORD = parse_config_file(path, 'PASSWORD')
-        CONFIG_PATH = path #SAVES to cfgParse GLOBAL (for use later, in OTHER parse commands)
+        CONFIG_PATH = path #SAVES to cfgParse GLOBAL (for use later, in OTHER parse commands) #REPLACE with BELOW
+        Global.CONFIG_PATH = path
     else:
         PASSWORD = parse_config_file(value='PASSWORD')
 
 
 
-    # Parse SQL Envs
+    # Parse SQL Env vars
     a,b,c = sql_envs()
 
     # Unsure why these globals.globals arent working? That def cleans up the program... (IF it works)
@@ -168,7 +169,8 @@ if __name__ == '__main__':
 
     # ------------------------------ Accept user input for credentials  ---------------------------------------- #
 
-
+    # Prompts for Username, Password -- repetitive
+    ''' 
     # username = Prompt.ask("[b]Please enter username: ", default="zach")
     # console.print(f"Username: [green]{username}")
     #
@@ -180,10 +182,9 @@ if __name__ == '__main__':
     #         console.print("[success]Successful Login.")
     #     else:
     #         console.print("[failure]Incorrect password, Please try again.")
+    '''
 
-
-    #TODO -- Simply READ IN (Prompt) the password / username for SQL ? -- think this is cleaner logic than passing paths to configs.   TRY both in BRANCHES, merge better option to origin?
-    # MAKE this the only login,
+    #TODO -- Try CONFIG (with .env -- dotenv), or ENV default vars in docker?
     # TRY config (if successfully parses config, and HAS globals set, NO prompts)
     # IF still not set, prompt below for password (and do a try / except in a while loop to test the credentials)
 
