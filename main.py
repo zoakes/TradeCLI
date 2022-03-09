@@ -211,8 +211,7 @@ if __name__ == '__main__':
     log_out = False
     cmd = main_menu()  # Update to have prompt OUTSIDE main menu? (And remove from M cmd... pass there)
     while True:
-        Global.LastTime = datetime.datetime.now() #Update for uptime calcs
-
+        # Check connection (Reconnect if not connected)
         sql_conn_test(True)
 
         cmd = Prompt.ask(">>",
@@ -263,9 +262,8 @@ if __name__ == '__main__':
                 log_out = True
 
         elif CMD == 'U':
-            # s = f"[b]{sym}\n[blue]{str(q)}"
-            # p = Panel(s, expand=True)
-            uptime = Global.LastTime - Global.StartTime
+            curr = datetime.datetime.now()
+            uptime = curr - Global.StartTime
             # days = uptime.days
             # hours, remainder = divmod(uptime.seconds, 3600)
             # hours = hours - (days // 1)
