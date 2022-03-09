@@ -263,8 +263,10 @@ if SQL_IP is None or SQL_USER is None or SQL_PASSWORD is None:
 
 print(SQL_IP, SQL_USER, SQL_PASSWORD)
 
+from Services.globals import Global #TRY this inside and outside function -- EITHEr works fine!
 
-
+def test_global_ref():
+    print("Start Time", Global.StartTime)
 
 # ----------------------- OLD Async versions -------------------- ##
 '''

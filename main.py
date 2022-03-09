@@ -19,7 +19,7 @@ from rich.panel import Panel
 from Services.cfgParse import parse_config_file, CONFIG_PATH
 # CONFIG_PATH = None
 
-from Services.SQL import persist_globals, sql_envs, test_globals, sql_credential_test, sql_conn_test
+from Services.SQL import persist_globals, sql_envs, test_globals, sql_credential_test, sql_conn_test, test_global_ref
 from Services.FormatSql import UnfilledTable, UnsentTable, PendingTable, FilledTable, AllOrdersTable
 from Services.globals import set_sql_ip, set_sql_user, set_sql_password, check_globals, Global
 
@@ -279,6 +279,8 @@ if __name__ == '__main__':
 
         if log_out:
             break
+
+        # test_global_ref() #Works!
 
     console.print("[blue]Logging Out...")
     time.sleep(1)
