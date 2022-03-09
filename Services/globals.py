@@ -50,6 +50,10 @@ class Global:
     SQL_PASSWORD = None
     SQL_USER = None
 
+    StartTime = None
+    LastTime = None
+
+
     #For properties...
 
 
@@ -71,5 +75,3 @@ class Global:
 
 # Global.SQL_IP = 1111111
 # print(Global.SQL_IP)
-
-

@@ -1,6 +1,7 @@
 import click
 import fire  # Undecided on which lib to use yet...
 
+import datetime
 import rich
 from rich.console import Console
 from rich.prompt import Prompt
@@ -20,7 +21,7 @@ from Services.cfgParse import parse_config_file, CONFIG_PATH
 
 from Services.SQL import persist_globals, sql_envs, test_globals, sql_credential_test, sql_conn_test
 from Services.FormatSql import UnfilledTable, UnsentTable, PendingTable, FilledTable, AllOrdersTable
-from Services.globals import set_sql_ip, set_sql_user, set_sql_password, check_globals
+from Services.globals import set_sql_ip, set_sql_user, set_sql_password, check_globals, Global
 
 import os
 import sys
@@ -55,7 +56,15 @@ async def test_non_block():
 
 
 # -------------------------------- Rich Helpers ---------------------------- #
-menu = {"Main": "M", "Balance": "B", "Positions": "P", "P/L": "PL", "Orders": "O", "Trades": "T", "Log": 'L'}
+menu = {"Main": "M",
+        "Balance": "B",
+        "Positions": "P",
+        "P/L": "PL",
+        "Orders": "O",
+        "Trades": "T",
+        "Log": 'L',
+        'Uptime': 'U',
+    }
 
 
 def main_menu():
@@ -72,7 +81,8 @@ def main_menu():
         p = Panel(s, expand=True)
         lst_of_panels.append(p)
 
-    console.print(" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Main Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ", justify='left')
+    console.print(" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Main Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n", justify='left')
+    #console.print(Panel("Main Menu"))
     console.print(Columns(lst_of_panels), justify='left')
 
     # Unsure if I want this here, or AFTER main_menu called...
@@ -192,7 +202,7 @@ if __name__ == '__main__':
             else:
                 console.print('[failure] Please Retry Entering SQL Credentials.')
 
-
+    Global.StartTime = datetime.datetime.now()
 
     # Threading Version (Start background task -- say checking PNL or updating table, whatever). https://www.programiz.com/python-programming/time/sleep
     # t1 = threading.Thread(target=test_non_blocking, daemon=True)
@@ -201,10 +211,12 @@ if __name__ == '__main__':
     log_out = False
     cmd = main_menu()  # Update to have prompt OUTSIDE main menu? (And remove from M cmd... pass there)
     while True:
+        Global.LastTime = datetime.datetime.now() #Update for uptime calcs
+
         sql_conn_test(True)
 
         cmd = Prompt.ask(">>",
-                         choices=['b', 'm', 'p', 'pl', 'o', 't', 'l', 'B', 'M', 'P', 'O', 'PL', 'T', 'L', 'q', 'Q'],
+                         choices=['b', 'm', 'p', 'pl', 'o', 't', 'l', 'B', 'M', 'P', 'O', 'PL', 'T', 'L', 'q', 'Q', 'U','u'],
                          show_choices=False)
         CMD = cmd.upper()
 
@@ -249,6 +261,19 @@ if __name__ == '__main__':
             confirm_log_out = Confirm.ask("Are you sure you want to log out?")
             if confirm_log_out:
                 log_out = True
+
+        elif CMD == 'U':
+            # s = f"[b]{sym}\n[blue]{str(q)}"
+            # p = Panel(s, expand=True)
+            uptime = Global.LastTime - Global.StartTime
+            # days = uptime.days
+            # hours, remainder = divmod(uptime.seconds, 3600)
+            # hours = hours - (days // 1)
+            # minutes, seconds = divmod(remainder, 60)
+
+            s = f"Live since {Global.StartTime.strftime('%x')} {Global.StartTime.strftime('%X')}\nUptime: [blue]   {uptime}" ##{days}d {hours}:{minutes}:{seconds}"
+            console.print(Panel(s, expand=True))
+
         else:
             pass
 
