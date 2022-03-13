@@ -269,7 +269,8 @@ if __name__ == '__main__':
         # Balance
         elif CMD == 'B':
             # TODO: Lookup balance here (in SQL !) (Same SQL Table -- save BALANCE as well)
-            #  Table Structure -- IF NO SYMBOL, create TOTAL table (OR leave EMPTY line for TOTAL with others?)
+            #  Table Structure -- (no symbol == total) - MAKE it many tables... one for each symbol, and one for Total
+            # I.E. Total, ESH2, NQH2 ...
             bal = locale.format_string("%d", 1234567.89, grouping=True)
             s = f'Balance: [success] ${bal}'
             console.print(Panel(s, expand=False))
